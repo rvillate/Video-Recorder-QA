@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.btn_inicia_grabacion = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.txt_ruta_grabacion = new System.Windows.Forms.TextBox();
             this.chk_memoria_llena = new System.Windows.Forms.CheckBox();
@@ -47,7 +48,6 @@
             this.Nombre = new System.Windows.Forms.ColumnHeader();
             this.Duracion = new System.Windows.Forms.ColumnHeader();
             this.Fecha = new System.Windows.Forms.ColumnHeader();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -80,6 +80,16 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Control";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(383, 126);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(27, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label3
             // 
@@ -187,7 +197,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 5000;
+            this.timer1.Interval = 2000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // listView1
@@ -228,16 +238,6 @@
             this.Fecha.Text = "Fecha";
             this.Fecha.Width = 100;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(383, 126);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(27, 23);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -247,7 +247,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "QA - Grabación pantalla";
+            this.Text = "Grabación pantalla";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

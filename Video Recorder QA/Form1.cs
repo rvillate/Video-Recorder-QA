@@ -7,6 +7,7 @@ using System.Timers;
 using System.Management;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using System.Configuration; // Asegúrate de tener esta referencia
 
 
 
@@ -32,6 +33,8 @@ namespace Video_Recorder_QA
         public Form1()
         {
             InitializeComponent();
+            rutaGrabacion = ConfigurationManager.AppSettings["RutaGrabacion"];
+            txt_ruta_grabacion.Text = rutaGrabacion; // Inicializa el TextBox
         }
 
         private async void btn_inicia_grabacion_Click(object sender, EventArgs e)
@@ -135,7 +138,6 @@ namespace Video_Recorder_QA
         private async void timer1_Tick(object sender, EventArgs e)
         {
             ObtenerEspacioLibreEnMB(txt_ruta_grabacion.Text);
-
             if (chk_memoria_llena.Checked == true)
             {
                 if (freeSpaceMB < 500 && !mensajeMostrado)
@@ -310,8 +312,21 @@ namespace Video_Recorder_QA
             DialogResult result = folder.ShowDialog();
             if (result == DialogResult.OK)
             {
-                txt_ruta_grabacion.Text = folder.SelectedPath;
+                rutaGrabacion = folder.SelectedPath; // Actualiza la ruta
+                txt_ruta_grabacion.Text = rutaGrabacion;
+
+                // Guardar la nueva ruta en el archivo de configuración
+                SaveRutaGrabacion(rutaGrabacion);
+                CargarVideosEnListView();
             }
+        }
+        private void SaveRutaGrabacion(string nuevaRuta)
+        {
+            // Acceder a la configuración y actualizar la clave de RutaGrabacion
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.AppSettings.Settings["RutaGrabacion"].Value = nuevaRuta;
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings"); // Refrescar la sección
         }
     }
 }
