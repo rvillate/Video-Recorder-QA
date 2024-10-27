@@ -47,6 +47,7 @@
             this.Nombre = new System.Windows.Forms.ColumnHeader();
             this.Duracion = new System.Windows.Forms.ColumnHeader();
             this.Fecha = new System.Windows.Forms.ColumnHeader();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -64,6 +65,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txt_ruta_grabacion);
             this.groupBox1.Controls.Add(this.chk_memoria_llena);
@@ -92,7 +94,7 @@
             // 
             this.txt_ruta_grabacion.Location = new System.Drawing.Point(129, 126);
             this.txt_ruta_grabacion.Name = "txt_ruta_grabacion";
-            this.txt_ruta_grabacion.Size = new System.Drawing.Size(245, 23);
+            this.txt_ruta_grabacion.Size = new System.Drawing.Size(252, 23);
             this.txt_ruta_grabacion.TabIndex = 11;
             this.txt_ruta_grabacion.Text = "C:\\Users\\DevraYa\\Videos\\Grabaciones";
             // 
@@ -198,12 +200,16 @@
             this.Nombre,
             this.Duracion,
             this.Fecha});
+            this.listView1.LabelEdit = true;
             this.listView1.Location = new System.Drawing.Point(432, 12);
+            this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(312, 234);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
+            this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
             this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
             this.listView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseMove);
             this.listView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseUp);
@@ -221,6 +227,16 @@
             // 
             this.Fecha.Text = "Fecha";
             this.Fecha.Width = 100;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(383, 126);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(27, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -263,5 +279,6 @@
         private ColumnHeader Fecha;
         private ColumnHeader Nombre;
         private ColumnHeader Duracion;
+        private Button button1;
     }
 }

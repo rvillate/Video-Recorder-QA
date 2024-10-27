@@ -23,16 +23,11 @@ namespace Video_Recorder_QA
         int espacioEnMB;
         int freeSpaceMB;
 
-        private TimeSpan _totalTiempoGrabado = TimeSpan.Zero;
-
         private string rutaGrabacion = "C:\\Users\\DevraYa\\Videos\\Grabaciones";
-
-        private System.Timers.Timer _tiempoGrabadoTimer;
 
         private bool mensajeMostrado = false;
         private Point startPoint; // Para almacenar el punto inicial del mouse
         private bool dragging = false; // Para saber si estamos arrastrando
-
 
         public Form1()
         {
@@ -166,39 +161,6 @@ namespace Video_Recorder_QA
             }
         }
 
-        private async void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (_isRecording)
-            {
-                // Detener la grabación actual
-                await EndRecordingAsync();
-
-                // Pausar brevemente para asegurar que el archivo se guarda correctamente
-                await Task.Delay(1000);
-            }
-        }
-
-        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_isRecording)
-            {
-                // Detener la grabación actual
-                await EndRecordingAsync();
-
-                // Pausar brevemente para asegurar que el archivo se guarda correctamente
-                await Task.Delay(1000);
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog folder = new FolderBrowserDialog();
-            DialogResult result = folder.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                txt_ruta_grabacion.Text = folder.SelectedPath;
-            }
-        }
 
         private void CargarVideosEnListView()
         {
@@ -271,24 +233,25 @@ namespace Video_Recorder_QA
             {
                 // Calcular la distancia desde el punto de inicio
                 if (!dragging &&
-                    Math.Abs(e.X - startPoint.X) > SystemInformation.DragSize.Width ||
-                    Math.Abs(e.Y - startPoint.Y) > SystemInformation.DragSize.Height)
+                    (Math.Abs(e.X - startPoint.X) > SystemInformation.DragSize.Width ||
+                     Math.Abs(e.Y - startPoint.Y) > SystemInformation.DragSize.Height))
                 {
                     dragging = true; // Ahora estamos arrastrando
-                                     // Obtener el elemento que está debajo del cursor al iniciar el arrastre
+
+                    // Obtener el elemento que está debajo del cursor al iniciar el arrastre
                     ListViewItem item = listView1.GetItemAt(e.X, e.Y);
                     if (item != null)
                     {
-                        // Iniciar la operación de arrastre solo si se selecciona un elemento
                         string nombreArchivo = item.Text;
                         string rutaArchivo = Path.Combine(txt_ruta_grabacion.Text, nombreArchivo);
 
                         // Verificar si el archivo existe
                         if (File.Exists(rutaArchivo))
                         {
-                            // Crear un objeto DataObject con la ruta del archivo
+                            // Crear un objeto DataObject solo para este archivo
                             DataObject data = new DataObject(DataFormats.FileDrop, new string[] { rutaArchivo });
-                            // Iniciar la operación de arrastrar
+
+                            // Iniciar la operación de arrastre para este archivo
                             DragDropEffects efecto = listView1.DoDragDrop(data, DragDropEffects.Copy);
                         }
                         else
@@ -297,6 +260,57 @@ namespace Video_Recorder_QA
                         }
                     }
                 }
+            }
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            // Obtener el item seleccionado
+            if (listView1.SelectedItems.Count > 0)
+            {
+                // Habilitar la edición de la celda
+                listView1.SelectedItems[0].BeginEdit();
+            }
+        }
+
+        private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            if (e.Label != null) // Asegurarse de que el nombre no sea nulo
+            {
+                // Obtener el nuevo nombre del archivo
+                string nuevoNombre = e.Label;
+                string rutaActual = Path.Combine(txt_ruta_grabacion.Text, listView1.Items[e.Item].Text);
+                string nuevaRuta = Path.Combine(txt_ruta_grabacion.Text, nuevoNombre);
+
+                // Renombrar el archivo en el sistema de archivos
+                if (File.Exists(rutaActual))
+                {
+                    try
+                    {
+                        File.Move(rutaActual, nuevaRuta); // Renombrar el archivo
+                        e.CancelEdit = false; // Aceptar el cambio
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al renombrar el archivo: " + ex.Message);
+                        e.CancelEdit = true; // Cancelar el cambio si hay un error
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("El archivo no existe.");
+                    e.CancelEdit = true; // Cancelar el cambio si el archivo no existe
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folder = new FolderBrowserDialog();
+            DialogResult result = folder.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                txt_ruta_grabacion.Text = folder.SelectedPath;
             }
         }
     }
