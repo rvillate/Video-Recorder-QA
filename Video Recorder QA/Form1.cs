@@ -5,6 +5,10 @@ using ScreenRecorderLib;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Management;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+
+
 
 namespace Video_Recorder_QA
 {
@@ -17,6 +21,7 @@ namespace Video_Recorder_QA
 
         int espacioEnGB;
         int espacioEnMB;
+        int freeSpaceMB;
 
         private TimeSpan _totalTiempoGrabado = TimeSpan.Zero;
 
@@ -25,6 +30,8 @@ namespace Video_Recorder_QA
         private System.Timers.Timer _tiempoGrabadoTimer;
 
         private bool mensajeMostrado = false;
+        private Point startPoint; // Para almacenar el punto inicial del mouse
+        private bool dragging = false; // Para saber si estamos arrastrando
 
 
         public Form1()
@@ -56,6 +63,7 @@ namespace Video_Recorder_QA
                 await EndRecordingAsync();
                 btn_inicia_grabacion.Text = "Iniciar grabación";
             }
+            CargarVideosEnListView();
         }
 
         private void ObtenerEspacioLibreEnMB(string ruta)
@@ -67,7 +75,7 @@ namespace Video_Recorder_QA
             long freeSpaceBytes = driveInfo.AvailableFreeSpace;
 
             // Convertir el espacio libre a MB
-            int freeSpaceMB = (int)(freeSpaceBytes / (1024 * 1024));
+            freeSpaceMB = (int)(freeSpaceBytes / (1024 * 1024));
 
             espacioEnGB = Convert.ToInt32(freeSpaceMB / 1024);
             espacioEnMB = Math.Abs((espacioEnGB * 1024) - freeSpaceMB);
@@ -93,7 +101,6 @@ namespace Video_Recorder_QA
             //_rec.OnRecordingComplete += Rec_OnRecordingComplete;
             _rec.OnRecordingFailed += Rec_OnRecordingFailed;
             _rec.OnStatusChanged += Rec_OnStatusChanged;
-
             _rec.Record(videoFilePath);
 
             _sequenceId++;
@@ -125,6 +132,7 @@ namespace Video_Recorder_QA
         {
             timer1.Enabled = true;
             txt_ruta_grabacion.Text = rutaGrabacion;
+            CargarVideosEnListView();
         }
 
 
@@ -135,7 +143,7 @@ namespace Video_Recorder_QA
 
             if (chk_memoria_llena.Checked == true)
             {
-                if (espacioEnMB < 500 && !mensajeMostrado)
+                if (freeSpaceMB < 500 && !mensajeMostrado)
                 {
                     DialogResult result = MessageBox.Show("El disco donde se están guardando los videos tiene menos de 500 MB de memoria, ¿desea continuar? Se deshabilitará el check de avisar memoria llena; en caso contrario, se detendrá el video.", "Memoria llena", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -189,6 +197,106 @@ namespace Video_Recorder_QA
             if (result == DialogResult.OK)
             {
                 txt_ruta_grabacion.Text = folder.SelectedPath;
+            }
+        }
+
+        private void CargarVideosEnListView()
+        {
+            // Limpiar el ListView antes de agregar nuevos elementos
+            listView1.Items.Clear();
+
+            // Obtener todos los archivos .mp4 en la carpeta
+            string[] archivos = Directory.GetFiles(txt_ruta_grabacion.Text, "*.mp4");
+
+            // Obtener los FileInfo de los archivos y ordenarlos por fecha de creación de forma descendente
+            var archivosOrdenados = archivos
+                .Select(archivo => new FileInfo(archivo))
+                .OrderByDescending(file => file.CreationTime)
+                .ToList();
+
+            // Recorrer cada archivo encontrado y agregarlo al ListView
+            foreach (FileInfo file in archivosOrdenados)
+            {
+                // Crear un nuevo item en el ListView con el nombre del archivo
+                ListViewItem item = new ListViewItem(file.Name);
+                item.SubItems.Add(GetVideoDuration(file.FullName)); // Método que ya deberías tener para obtener la duración
+                item.SubItems.Add(file.CreationTime.ToString("dd/MM/yy hh:mm:ss"));
+                listView1.Items.Add(item);
+            }
+        }
+
+
+        public static string GetVideoDuration(string filePath)
+        {
+            using (ShellPropertyCollection properties = new ShellPropertyCollection(filePath))
+            {
+                foreach (IShellProperty prop in properties)
+                {
+                    if (prop.CanonicalName == "System.Media.Duration")
+                    {
+                        var durationInTicks = (ulong)prop.ValueAsObject;
+                        TimeSpan duration = TimeSpan.FromTicks((long)durationInTicks);
+
+                        string formattedDuration = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                            duration.Hours,
+                            duration.Minutes,
+                            duration.Seconds);
+
+                        return formattedDuration;
+                    }
+                }
+            }
+            return "00:00:00";
+        }
+
+        private void listView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Almacenar la posición inicial del mouse
+            startPoint = e.Location;
+            dragging = false; // Inicialmente no estamos arrastrando
+
+            
+        }
+       
+        private void listView1_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Reiniciar la bandera de arrastre cuando se suelta el mouse
+            dragging = false;
+        }
+
+        private void listView1_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Verificar si se está arrastrando
+            if (e.Button == MouseButtons.Left)
+            {
+                // Calcular la distancia desde el punto de inicio
+                if (!dragging &&
+                    Math.Abs(e.X - startPoint.X) > SystemInformation.DragSize.Width ||
+                    Math.Abs(e.Y - startPoint.Y) > SystemInformation.DragSize.Height)
+                {
+                    dragging = true; // Ahora estamos arrastrando
+                                     // Obtener el elemento que está debajo del cursor al iniciar el arrastre
+                    ListViewItem item = listView1.GetItemAt(e.X, e.Y);
+                    if (item != null)
+                    {
+                        // Iniciar la operación de arrastre solo si se selecciona un elemento
+                        string nombreArchivo = item.Text;
+                        string rutaArchivo = Path.Combine(txt_ruta_grabacion.Text, nombreArchivo);
+
+                        // Verificar si el archivo existe
+                        if (File.Exists(rutaArchivo))
+                        {
+                            // Crear un objeto DataObject con la ruta del archivo
+                            DataObject data = new DataObject(DataFormats.FileDrop, new string[] { rutaArchivo });
+                            // Iniciar la operación de arrastrar
+                            DragDropEffects efecto = listView1.DoDragDrop(data, DragDropEffects.Copy);
+                        }
+                        else
+                        {
+                            MessageBox.Show("El archivo no existe: " + rutaArchivo);
+                        }
+                    }
+                }
             }
         }
     }

@@ -14,6 +14,8 @@
     <PackageReference Include="ScreenRecorderLib" Version="6.3.0" />
     <PackageReference Include="SharpAvi.Net5" Version="2.2.1" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="Windows7APICodePack-Core" Version="1.1.0" />
+    <PackageReference Include="WindowsAPICodePack" Version="8.0.6" />
     <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
   </ItemGroup>
 
