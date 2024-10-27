@@ -37,7 +37,6 @@
             this.chk_memoria_llena = new System.Windows.Forms.CheckBox();
             this.chk_audio_mic = new System.Windows.Forms.CheckBox();
             this.chk_audio_sistema = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -45,7 +44,6 @@
             this.txt_total_tiempo_grabado = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.listView1 = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -69,20 +67,19 @@
             this.groupBox1.Controls.Add(this.chk_memoria_llena);
             this.groupBox1.Controls.Add(this.chk_audio_mic);
             this.groupBox1.Controls.Add(this.chk_audio_sistema);
-            this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btn_inicia_grabacion);
             this.groupBox1.Controls.Add(this.numericUpDown1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(414, 153);
+            this.groupBox1.Size = new System.Drawing.Size(414, 168);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Control";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(381, 125);
+            this.button3.Location = new System.Drawing.Point(380, 127);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(28, 23);
             this.button3.TabIndex = 13;
@@ -93,7 +90,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(20, 127);
+            this.label3.Location = new System.Drawing.Point(19, 129);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(106, 15);
             this.label3.TabIndex = 12;
@@ -101,7 +98,7 @@
             // 
             // txt_ruta_grabacion
             // 
-            this.txt_ruta_grabacion.Location = new System.Drawing.Point(130, 124);
+            this.txt_ruta_grabacion.Location = new System.Drawing.Point(129, 126);
             this.txt_ruta_grabacion.Name = "txt_ruta_grabacion";
             this.txt_ruta_grabacion.Size = new System.Drawing.Size(245, 23);
             this.txt_ruta_grabacion.TabIndex = 11;
@@ -139,15 +136,6 @@
             this.chk_audio_sistema.Text = "Audio sistema";
             this.chk_audio_sistema.UseVisualStyleBackColor = true;
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(285, 45);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(123, 39);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Extraer ultimos 0 segundos";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -178,9 +166,9 @@
             // 
             this.groupBox2.Controls.Add(this.espacio_libre);
             this.groupBox2.Controls.Add(this.txt_total_tiempo_grabado);
-            this.groupBox2.Location = new System.Drawing.Point(12, 171);
+            this.groupBox2.Location = new System.Drawing.Point(12, 186);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(414, 109);
+            this.groupBox2.Size = new System.Drawing.Size(414, 60);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Estado";
@@ -208,20 +196,11 @@
             this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // listView1
-            // 
-            this.listView1.Location = new System.Drawing.Point(432, 12);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(311, 268);
-            this.listView1.TabIndex = 4;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(755, 292);
-            this.Controls.Add(this.listView1);
+            this.ClientSize = new System.Drawing.Size(436, 255);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
@@ -248,7 +227,6 @@
         private GroupBox groupBox2;
         private Label txt_total_tiempo_grabado;
         private Label espacio_libre;
-        private Button button2;
         private CheckBox chk_audio_mic;
         private CheckBox chk_audio_sistema;
         private CheckBox chk_memoria_llena;
@@ -257,6 +235,5 @@
         private Button button3;
         private System.Windows.Forms.Timer timer1;
         private FolderBrowserDialog folderBrowserDialog1;
-        private ListView listView1;
     }
 }

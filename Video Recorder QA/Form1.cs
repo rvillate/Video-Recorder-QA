@@ -24,6 +24,8 @@ namespace Video_Recorder_QA
 
         private System.Timers.Timer _tiempoGrabadoTimer;
 
+        private bool mensajeMostrado = false;
+
 
         public Form1()
         {
@@ -34,7 +36,7 @@ namespace Video_Recorder_QA
         {
             if (btn_inicia_grabacion.Text.Equals("Iniciar grabación"))
             {
-                ObtenerEspacioLibreEnMB(txt_ruta_grabacion.Text);
+                ObtenerEspacioLibreEnMB("C:\\");
                 if (espacioEnGB * 1024 + espacioEnMB < 512)
                 {
                     DialogResult result = MessageBox.Show(@"Poco espacio en disco C:\. Este disco se usa para guardar un archivo temporal de grabación, ¿seguro que desea continuar?", "Poco espacio en disco", MessageBoxButtons.YesNo);
@@ -125,17 +127,35 @@ namespace Video_Recorder_QA
             txt_ruta_grabacion.Text = rutaGrabacion;
         }
 
-       
 
-        private void timer1_Tick(object sender, EventArgs e)
+
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             ObtenerEspacioLibreEnMB(txt_ruta_grabacion.Text);
 
             if (chk_memoria_llena.Checked == true)
             {
+                if (espacioEnMB < 500 && !mensajeMostrado)
+                {
+                    DialogResult result = MessageBox.Show("El disco donde se están guardando los videos tiene menos de 500 MB de memoria, ¿desea continuar? Se deshabilitará el check de avisar memoria llena; en caso contrario, se detendrá el video.", "Memoria llena", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
+                    mensajeMostrado = true;
+
+                    if (result == DialogResult.Yes)
+                    {
+                        chk_memoria_llena.Checked = false;
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        await EndRecordingAsync();
+                        btn_inicia_grabacion.Text = "Iniciar grabación";
+                    }
+                }
+                else if (espacioEnMB >= 500)
+                {
+                    mensajeMostrado = false;
+                }
             }
-
         }
 
         private async void Form1_FormClosed(object sender, FormClosedEventArgs e)
